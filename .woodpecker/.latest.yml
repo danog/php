@@ -1,12 +1,3 @@
-matrix:
-  variant:
-    - "alpineedge/cli"
-    - "alpineedge/fpm"
-    - "sid/cli"
-    - "sid/fpm"
-  platform:
-    - linux/riscv64
-
 clone:
   git:
     when:
@@ -20,29 +11,18 @@ clone:
       tags: true
 
 pipeline:
-  docker:
-    image: woodpeckerci/plugin-docker-buildx
-    secrets: [docker_username, docker_password]
-    settings:
-      repo: danog/php
-      dockerfile: "8.2/${variant}/Dockerfile"
-      platforms: ${platform}
-      tag: 8.2-${variant}
-    when:
-      event:
-        - push
-  
   docker-latest:
     image: woodpeckerci/plugin-docker-buildx
     secrets: [docker_username, docker_password]
     settings:
       repo: danog/madelineproto
       dockerfile: "8.2/sid/cli/Dockerfile"
-      platforms: ${platform}
+      platforms: linux/riscv64
       tag: latest
     when:
       event:
         - push
+      platform: linux/riscv64
 
   docker-latest-8.2:
     image: woodpeckerci/plugin-docker-buildx
@@ -50,8 +30,12 @@ pipeline:
     settings:
       repo: danog/madelineproto
       dockerfile: "8.2/sid/cli/Dockerfile"
-      platforms: ${platform}
+      platforms: linux/riscv64
       tag: 8.2
     when:
       event:
         - push
+      platform: linux/riscv64
+
+depends_on:
+  - variants

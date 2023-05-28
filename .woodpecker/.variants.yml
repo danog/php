@@ -1,0 +1,32 @@
+matrix:
+  variant:
+    - "alpineedge/cli"
+    - "alpineedge/fpm"
+    - "sid/cli"
+    - "sid/fpm"
+
+clone:
+  git:
+    when:
+      event:
+        - push
+    image: woodpeckerci/plugin-git:v1.5.0
+    settings:
+      depth: 1
+      lfs: false
+      recursive: false
+      tags: true
+
+pipeline:
+  docker:
+    image: woodpeckerci/plugin-docker-buildx
+    secrets: [docker_username, docker_password]
+    settings:
+      repo: danog/php
+      dockerfile: "8.2/${variant}/Dockerfile"
+      platforms: linux/riscv64
+      tag: 8.2-${variant}
+    when:
+      event:
+        - push
+      platform: linux/riscv64
