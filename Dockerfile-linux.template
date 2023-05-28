@@ -331,6 +331,7 @@ RUN set -eux; \
 		--with-openssl \
 		--with-readline \
 		--with-zlib \
+		--without-pcre-jit \
 		\
 {{ if env.variant == "cli" then ( -}}
 # https://github.com/docker-library/php/pull/1259

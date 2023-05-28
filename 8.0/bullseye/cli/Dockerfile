@@ -159,6 +159,7 @@ RUN set -eux; \
 		--with-openssl \
 		--with-readline \
 		--with-zlib \
+		--without-pcre-jit \
 		\
 # https://github.com/docker-library/php/pull/1259
 		--enable-phpdbg \
