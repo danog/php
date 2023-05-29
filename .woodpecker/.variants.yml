@@ -1,5 +1,3 @@
-platform: linux/riscv64
-
 clone:
   git:
     when:
