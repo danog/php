@@ -1,3 +1,5 @@
+platform: linux/arm64 # Connected via buildx to starfive2
+
 clone:
   git:
     when:
