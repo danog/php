@@ -1,8 +1,28 @@
 #!/bin/sh -e
 
 docker login --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
-
-cd "8.2/alpineedge/cli/"
 docker buildx create --use --name wp --driver remote tcp://192.168.69.206:1234
-docker buildx build --platform linux/riscv64 . -t danog/php:8.2-alpine
-docker push danog/php:8.2-alpine
+
+build() {
+	cd "$1"
+	docker buildx build --platform linux/riscv64 . -t danog/php:$2 --cache-from danog/php:$2 --cache-to type=inline
+	docker push danog/php:$2
+	cd "$base"
+}
+
+
+cd 8.2
+
+base=$PWD
+
+build alpineedge/cli/ 8.2-alpine
+build alpineedge/fpm/ 8.2-fpm-alpine
+
+build sid/cli/ 8.2
+build sid/fpm/ 8.2-fpm
+
+docker tag danog/php:8.2 danog/php:8.2-debian
+docker tag danog/php:8.2-fpm danog/php:8.2-fpm-debian
+
+docker push danog/php:8.2-debian
+docker push danog/php:8.2-fpm-debian

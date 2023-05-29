@@ -13,7 +13,7 @@ clone:
       tags: true
 
 pipeline:
-  alpine-cli:
+  build:
     image: docker:cli
     secrets: [docker_username, docker_password]
     volumes:
@@ -24,45 +24,3 @@ pipeline:
       event:
         - push
 
-  sid-cli:
-    image: woodpeckerci/plugin-docker-buildx
-    secrets: [docker_username, docker_password]
-    settings:
-      repo: danog/php
-      dockerfile: "8.2/sid/cli/Dockerfile"
-      platforms: linux/riscv64
-      tag: 8.2
-      cache_from: type=registry,ref=danog/php:8.2
-      cache_to: type=inline
-    when:
-      event:
-        - push
-
-
-  alpine-fpm:
-    image: woodpeckerci/plugin-docker-buildx
-    secrets: [docker_username, docker_password]
-    settings:
-      repo: danog/php
-      dockerfile: "8.2/alpineedge/fpm/Dockerfile"
-      platforms: linux/riscv64
-      tag: 8.2-fpm-alpine
-      cache_from: type=registry,ref=danog/php:8.2-fpm-alpine
-      cache_to: type=inline
-    when:
-      event:
-        - push
-
-  sid-fpm:
-    image: woodpeckerci/plugin-docker-buildx
-    secrets: [docker_username, docker_password]
-    settings:
-      repo: danog/php
-      dockerfile: "8.2/sid/fpm/Dockerfile"
-      platforms: linux/riscv64
-      tag: 8.2-fpm
-      cache_from: type=registry,ref=danog/php:8.2-fpm
-      cache_to: type=inline
-    when:
-      event:
-        - push
