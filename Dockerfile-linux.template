@@ -228,6 +228,9 @@ RUN set -eux; \
 {{ ) end -}}
 
 COPY docker-php-source /usr/local/bin/
+{{ if is_alpine then "" else ( -}}
+	COPY latomic.patch /
+{{ ) end -}}
 
 RUN set -eux; \
 {{ if is_alpine then ( -}}
