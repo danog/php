@@ -161,6 +161,8 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		apache2-dev \
+		autoconf \
+		automake \
 		libargon2-dev \
 		libcurl4-openssl-dev \
 		libonig-dev \
@@ -185,6 +187,9 @@ RUN set -eux; \
 	if [ ! -d /usr/include/curl ]; then \
 		ln -sT "/usr/include/$debMultiarch/curl" /usr/local/include/curl; \
 	fi; \
+	patch -p1 < /latomic.patch; \
+	rm /latomic.patch; \
+	autoreconf -vfi; \
 	./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \

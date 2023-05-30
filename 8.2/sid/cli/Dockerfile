@@ -96,14 +96,14 @@ RUN set -eux; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 COPY docker-php-source /usr/local/bin/
-COPY latomic.patch /
 
 RUN set -eux; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		pkg-config autoconf bison re2c \
+		autoconf \
+		automake \
 		libargon2-dev \
 		libcurl4-openssl-dev \
 		libonig-dev \
@@ -128,9 +128,9 @@ RUN set -eux; \
 	if [ ! -d /usr/include/curl ]; then \
 		ln -sT "/usr/include/$debMultiarch/curl" /usr/local/include/curl; \
 	fi; \
-        patch -p1 < /latomic.patch; \
-        rm /latomic.patch; \
-        autoreconf -vfi; \
+	patch -p1 < /latomic.patch; \
+	rm /latomic.patch; \
+	autoreconf -vfi; \
 	./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
