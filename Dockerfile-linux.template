@@ -262,8 +262,7 @@ RUN set -eux; \
 		else
 			# debian packages
 			if env.variant == "apache" then "apache2-dev" else empty end,
-			"autoconf",
-			"automake",
+			"pkg-config", "build-essential", "automake", "bison", "re2c", "libtool", "libtool-bin",
 			"libargon2-dev",
 			"libcurl4-openssl-dev",
 			"libreadline-dev",

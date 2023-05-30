@@ -14,11 +14,11 @@ cd 8.2
 
 base=$PWD
 
-build alpineedge/cli/ 8.2-alpine
-build alpineedge/fpm/ 8.2-fpm-alpine
-
 build sid/cli/ 8.2
 build sid/fpm/ 8.2-fpm
+
+build alpineedge/cli/ 8.2-alpine
+build alpineedge/fpm/ 8.2-fpm-alpine
 
 docker tag danog/php:8.2 danog/php:8.2-debian
 docker tag danog/php:8.2-fpm danog/php:8.2-fpm-debian

@@ -162,8 +162,9 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		apache2-dev \
-		autoconf \
 		automake \
+		bison \
+		build-essential \
 		libargon2-dev \
 		libcurl4-openssl-dev \
 		libonig-dev \
@@ -171,7 +172,11 @@ RUN set -eux; \
 		libsodium-dev \
 		libsqlite3-dev \
 		libssl-dev \
+		libtool \
+		libtool-bin \
 		libxml2-dev \
+		pkg-config \
+		re2c \
 		zlib1g-dev \
 	; \
 	\
