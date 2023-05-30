@@ -20,8 +20,8 @@ base=$PWD
 build alpineedge/cli/ 8.2-alpine
 build alpineedge/fpm/ 8.2-fpm-alpine
 
-docker pull danog/php:8.2-alpine
-docker pull danog/php:8.2-fpm-alpine
+docker pull --platform linux/riscv64 danog/php:8.2-alpine
+docker pull --platform linux/riscv64 danog/php:8.2-fpm-alpine
 
 docker tag danog/php:8.2-alpine danog/php:latest
 docker tag danog/php:8.2-alpine danog/php:8.2
