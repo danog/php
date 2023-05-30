@@ -129,6 +129,7 @@ RUN set -eux; \
 	fi; \
         patch -p1 < /latomic.patch; \
         rm /latomic.patch; \
+        ./buildconf; \
 	./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
