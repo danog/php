@@ -102,6 +102,7 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
+                pkg-config autoconf bison re2c \
 		libargon2-dev \
 		libcurl4-openssl-dev \
 		libonig-dev \
