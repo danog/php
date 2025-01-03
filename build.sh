@@ -17,8 +17,8 @@ base=$PWD
 #build sid/cli/ 8.2
 #build sid/fpm/ 8.2-fpm
 
-build alpineedge/cli/ 8.4-alpine
-build alpineedge/fpm/ 8.4-fpm-alpine
+build alpine3.21/cli/ 8.4-alpine
+build alpine3.21/fpm/ 8.4-fpm-alpine
 
 docker pull --platform linux/riscv64 danog/php:8.4-alpine
 docker pull --platform linux/riscv64 danog/php:8.4-fpm-alpine
