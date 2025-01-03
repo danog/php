@@ -69,7 +69,6 @@ for version; do
 		} > "$version/$dir/Dockerfile"
 
 		cp -a \
-			latomic.patch \
 			docker-php-entrypoint \
 			docker-php-ext-* \
 			docker-php-source \

@@ -85,21 +85,11 @@ for version in "${versions[@]}"; do
 	variants='[]'
 	# order here controls the order of the library/ file
 	for suite in \
+		bookworm \
 		bullseye \
-		buster \
-		alpine3.18 \
-		alpine3.17 \
-		alpine3.16 \
+		alpine3.21 \
+		alpine3.20 \
 	; do
-		# https://github.com/docker-library/php/pull/1348
-		if [ "$rcVersion" = '8.0' ] && [[ "$suite" = alpine* ]] && [ "$suite" != 'alpine3.16' ]; then
-			continue
-		fi
-		# https://github.com/docker-library/php/pull/1405
-		# 8.1 is temporary: https://github.com/docker-library/official-images/pull/14735 (should remove Alpine 3.16 support once Nextcloud 25 is EOL ~Oct 2023)
-		if [ "$suite" = 'alpine3.16' ] && [ "$rcVersion" != '8.0' ] && [ "$rcVersion" != '8.1' ]; then
-			continue
-		fi
 		for variant in cli apache fpm zts; do
 			if [[ "$suite" = alpine* ]]; then
 				if [ "$variant" = 'apache' ]; then

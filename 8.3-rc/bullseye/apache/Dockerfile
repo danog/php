@@ -118,9 +118,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C0779DC5C0A9DE4 AFD8691FDAEDF03BDF6E460563F15A9B715376CA
 
-ENV PHP_VERSION 8.3.0alpha1
-ENV PHP_URL="https://downloads.php.net/~jakub/php-8.3.0alpha1.tar.xz" PHP_ASC_URL="https://downloads.php.net/~jakub/php-8.3.0alpha1.tar.xz.asc"
-ENV PHP_SHA256="7df01cbae615cccdc01a811094a74326119080e1141988fd57aeefd6b751165c"
+ENV PHP_VERSION 8.3.16RC1
+ENV PHP_URL="https://downloads.php.net/~eric/php-8.3.16RC1.tar.xz" PHP_ASC_URL="https://downloads.php.net/~eric/php-8.3.16RC1.tar.xz.asc"
+ENV PHP_SHA256="c09ff054748d8017bab157c15d42ed9b43961082704ef5fefb6eef3d93364b93"
 
 RUN set -eux; \
 	\
@@ -154,7 +154,6 @@ RUN set -eux; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 COPY docker-php-source /usr/local/bin/
-	COPY latomic.patch /
 
 RUN set -eux; \
 	\
@@ -162,9 +161,6 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		apache2-dev \
-		automake \
-		bison \
-		build-essential \
 		libargon2-dev \
 		libcurl4-openssl-dev \
 		libonig-dev \
@@ -172,11 +168,7 @@ RUN set -eux; \
 		libsodium-dev \
 		libsqlite3-dev \
 		libssl-dev \
-		libtool \
-		libtool-bin \
 		libxml2-dev \
-		pkg-config \
-		re2c \
 		zlib1g-dev \
 	; \
 	\
@@ -184,6 +176,9 @@ RUN set -eux; \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -193,9 +188,6 @@ RUN set -eux; \
 	if [ ! -d /usr/include/curl ]; then \
 		ln -sT "/usr/include/$debMultiarch/curl" /usr/local/include/curl; \
 	fi; \
-	patch -p1 < /latomic.patch; \
-	rm /latomic.patch; \
-	autoreconf -vfi; \
 	./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
@@ -210,8 +202,6 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
-# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
-		--enable-ftp \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
@@ -229,7 +219,6 @@ RUN set -eux; \
 		--with-openssl \
 		--with-readline \
 		--with-zlib \
-		--without-pcre-jit \
 		\
 # https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
 		--disable-phpdbg \
@@ -237,9 +226,6 @@ RUN set -eux; \
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
-# bundled pcre does not support JIT on s390x
-# https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
-		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
 		--with-libdir="lib/$debMultiarch" \
 		\
 		--disable-cgi \
@@ -269,7 +255,7 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
-		| awk '/=>/ { print $(NF-1) }' \
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
