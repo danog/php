@@ -10,7 +10,7 @@ clone:
       recursive: false
       tags: true
 
-pipeline:
+steps:
   build:
     image: docker:cli
     environment:
